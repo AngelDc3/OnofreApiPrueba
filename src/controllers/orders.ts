@@ -1,17 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 
 
-import { createOrder, getAllOrders, getOrderById, updateOrderById, deleteOrderById, addItemToOrder } from "../services/orders";
+import { createOrder, getAllOrders, getOrderById, updateOrderById, deleteOrderById, addItemToOrder, generateDeudaAdams, addDebtIdToOrder, getOrderWithDebt } from "../services/orders";
 import { CustomError } from "../utils/customError";
 import { matchedData } from "express-validator";
 import { RequestExt } from "../interfaces/req-ext";
+import { calcularHmac } from "../utils/handleHmacAdams";
 
 // Create a new order
-export const createOrderCtrl = async (req: Request, res: Response, next: NextFunction) => {
+export const createOrderCtrl = async (req: RequestExt, res: Response, next: NextFunction) => {
     try {
-        const { body } = matchedData(req);
-        console.log("pasa")
-        const newOrder = await createOrder(body);
+        const body = matchedData(req); // para cuando sea necesario
+        const userId = req.user?.id;
+        const newOrder = await createOrder(userId);
         res.status(201).json(newOrder);
     } catch (error) {
         next(error);
@@ -96,6 +97,40 @@ export const addItemToOrderCtrl = async (req: Request, res: Response, next: Next
         if (!updatedOrder) {
             throw new CustomError("order not updated", 500);
         }
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const webhookCtrl = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const hmacEsperada = calcularHmac(req.body);
+        const hmacRecibida = req.headers["x-adams-notify-hash"];
+
+        if (hmacEsperada !== hmacRecibida) {
+            throw new CustomError("Invalid HMAC", 400);
+        }
+
+        //todo Do something with the webhook data
+        res.status(200).send(req.body);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const deudaCtrl = async (req: RequestExt, res: Response, next: NextFunction) => {
+    try {
+        const { body } = req;
+        const userId = req.user?.id;
+        const validatePedido = await getOrderWithDebt(body.idpedido, userId);
+        if (!validatePedido) {
+            throw new CustomError("order with debt already exists or order not found", 400);
+        }
+        const deuda = await generateDeudaAdams(body.idpedido, body.deuda, body.user_name);
+
+        const deudaId = await addDebtIdToOrder(body.idpedido, deuda.debt.docId, userId);
+
+        res.status(200).send(deudaId);
     } catch (error) {
         next(error);
     }

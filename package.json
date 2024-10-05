@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": " ts-node src/app.ts",
+    "start": "set NODE_ENV=production&& node dist/app.js",
     "dev": "nodemon  src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
     "prod": "set NODE_ENV=production&& ts-node src/app.ts"
   },
   "keywords": [],
@@ -13,8 +14,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "express": "^4.21.0",
     "express-validator": "^7.2.0",
     "jsonwebtoken": "^9.0.2",

@@ -28,6 +28,14 @@ function prodErrors(e: Error, res: Response) {
     }
 }
 
+function expiredtoken() {
+    return new CustomError('Token expirado', 401);
+}
+
+function invalidToken() {
+    return new CustomError('Token invalido', 401);
+}
+
 const errorCtrl = (err: Error, req: Request, res: Response, next: NextFunction) => {
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';
@@ -36,7 +44,8 @@ const errorCtrl = (err: Error, req: Request, res: Response, next: NextFunction) 
         devErrors(err, res);
     } else if (process.env.NODE_ENV === 'production') {
 
-        if (err.name === 'JsonWebTokenError') err = new CustomError('Token invalido', 401);
+        if (err.name === 'JsonWebTokenError') err = invalidToken()
+        if (err.name === 'TokenExpiredError') err = expiredtoken();
         prodErrors(err, res);
     }
 }

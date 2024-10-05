@@ -11,6 +11,8 @@ export interface Deuda {
     payStatusTime: Date;
     validPeriodStart: Date;
     validPeriodEnd: Date;
+    amount_currency: string;
+    amount_value: number;
 }
 
 export interface Pedido {
