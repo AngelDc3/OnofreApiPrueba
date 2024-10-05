@@ -8,7 +8,6 @@ import { Error } from "./interfaces/error.interface";
 import { errorCtrl } from "./controllers/errorController";
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-
 const PORT = process.env.PORT || 3010;
 const app = express();
 app.use(cors());

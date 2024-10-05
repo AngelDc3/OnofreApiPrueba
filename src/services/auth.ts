@@ -13,7 +13,6 @@ import config from "../config/pg";
 const pool = new Pool(config)
 
 const registerNewUser = async ({ email, password, userName }: User) => {
-    console.log(email, password, userName);
     const checkIs = await pool.query("SELECT * FROM users WHERE correo = $1", [email]);
     if (checkIs.rowCount) return "ALREADY_USER";
     const passHash = await encrypt(password);

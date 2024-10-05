@@ -4,30 +4,30 @@ import { RequestExt } from "../interfaces/req-ext";
 import { verifyToken } from "../utils/jwt.handle";
 import pg from "pg";
 import config from "../config/pg";
+import { CustomError } from "../utils/customError";
 const pool = new pg.Pool(config);
 const authMiddleware = async (req: RequestExt, res: Response, next: NextFunction) => {
     try {
         const jwtByUser = req.headers.authorization || "";
         const jwtToken = jwtByUser.split(" ").pop();
-        const isUser = verifyToken(`${jwtToken}`) as { id: string };
-
-
-        if (!isUser) {
-            res.status(401);
-            res.send("NO_TIENES_UN_JWT_VALIDO");
-        } else {
-            const exist = await pool.query("SELECT * FROM users WHERE id = $1", [isUser.id]);
-            if (exist.rowCount === 0) {
-                res.status(401);
-                res.send("NO_EXISTE_USUARIO");
-            }
-            req.user = isUser;
-            next();
+        if (!jwtToken) {
+            throw new CustomError("NO_TIENES_UN_JWT_VALIDO", 401);
         }
+
+        const isUser = verifyToken(`${jwtToken}`) as { id: string };
+        if (!isUser) {
+            throw new CustomError("NO_TIENES_UN_JWT_VALIDO", 401);
+        }
+
+        const exist = await pool.query("SELECT * FROM users WHERE userid = $1", [isUser.id]);
+        if (exist.rowCount === 0) {
+            throw new CustomError("NO_EXISTE_USUARIO", 401);
+        }
+
+        req.user = isUser;
+        next();
     } catch (e) {
-        console.log({ e });
-        res.status(400);
-        res.send("SESSION_NO_VALIDAD");
+        next(e);
     }
 };
 

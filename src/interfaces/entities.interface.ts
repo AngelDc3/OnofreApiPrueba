@@ -13,7 +13,7 @@ export interface Deuda {
     validPeriodEnd: Date;
 }
 
-export interface Order {
+export interface Pedido {
     idPedido: number;
     userId: string;  // UUID
     estado: string;
@@ -22,9 +22,17 @@ export interface Order {
     updated: Date;
 }
 
-export interface OrderDetail {
+export interface DetallePedido {
     idPedido: number;
     idArticulo: number;
     cantidad: number;
     precio: number;
+}
+
+export interface Articulo {
+    idArticulo: number;
+    imagenUrl: string;
+    cantidad: number;
+    precio: number;
+    descripcion: string;
 }
