@@ -112,6 +112,8 @@ export const webhookCtrl = async (req: Request, res: Response, next: NextFunctio
         }
 
         //todo Do something with the webhook data
+        console.log(req.body);
+
         res.status(200).send(req.body);
     } catch (error) {
         next(error);

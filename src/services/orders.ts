@@ -51,7 +51,7 @@ async function updateOrderById(id: number, order: Partial<Pedido>): Promise<Pedi
         const fields = Object.keys(order).map((key, index) => `${key} = $${index + 2}`).join(", ");
         const values = Object.values(order);
         const result = await client.query(
-            `UPDATE orders SET ${fields} WHERE id = $1 RETURNING *`,
+            `UPDATE pedido SET ${fields} WHERE id = $1 RETURNING *`,
             [id, ...values]
         );
         return result.rows[0] || null;
@@ -64,7 +64,7 @@ async function deleteOrderById(id: number): Promise<number | null> {
     const client = await pool.connect();
     let deleted;
     try {
-        deleted = await client.query("DELETE FROM orders WHERE id = $1", [id]);
+        deleted = await client.query("DELETE FROM pedido WHERE id = $1", [id]);
     } finally {
         client.release();
     }
