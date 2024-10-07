@@ -224,5 +224,16 @@ async function generateOrderPayUrl(userid: string, { items, total }: PayOrder) {
     }
 
 }
-export { createOrder, getAllOrders, generateOrderPayUrl, addDebtIdToOrder, getOrderWithDebt, getOrderById, generateDeudaAdams, updateOrderById, deleteOrderById, addItemToOrder };
+
+
+async function getOrderDetailById(orderId: string) {
+    const client = await pool.connect();
+    try {
+        const result = await client.query("SELECT * FROM detallepedido WHERE idpedido = $1 ", [orderId]);
+        return result.rows;
+    } finally {
+        client.release();
+    }
+}
+export { createOrder, getAllOrders, getOrderDetailById, generateOrderPayUrl, addDebtIdToOrder, getOrderWithDebt, getOrderById, generateDeudaAdams, updateOrderById, deleteOrderById, addItemToOrder };
 

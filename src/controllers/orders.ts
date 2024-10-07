@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 
-import { createOrder, getAllOrders, getOrderById, updateOrderById, deleteOrderById, addItemToOrder, generateDeudaAdams, addDebtIdToOrder, getOrderWithDebt, generateOrderPayUrl } from "../services/orders";
+import { createOrder, getAllOrders, getOrderById, updateOrderById, deleteOrderById, addItemToOrder, generateDeudaAdams, addDebtIdToOrder, getOrderWithDebt, generateOrderPayUrl, getOrderDetailById } from "../services/orders";
 import { CustomError } from "../utils/customError";
 import { matchedData } from "express-validator";
 import { RequestExt } from "../interfaces/req-ext";
@@ -147,6 +147,20 @@ export const payCtrl = async (req: RequestExt, res: Response, next: NextFunction
         const payUrl = await generateOrderPayUrl(userId, body);
 
         res.status(200).send(payUrl);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const getorderDetailCtrl = async (req: RequestExt, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+
+        const order = await getOrderDetailById(id);
+        if (!order) {
+            throw new CustomError("order not found", 404);
+        }
+        res.status(200).send(order);
     } catch (error) {
         next(error);
     }

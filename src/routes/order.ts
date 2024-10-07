@@ -4,7 +4,7 @@ import { Router } from "express";
 
 
 // Read a single order by ID
-import { createOrderCtrl, deleteOrder, getOrder, getAllOrdersCtrl, updateOrder, addItemToOrderCtrl, webhookCtrl, deudaCtrl, payCtrl } from '../controllers/orders';
+import { createOrderCtrl, deleteOrder, getOrder, getAllOrdersCtrl, updateOrder, addItemToOrderCtrl, webhookCtrl, deudaCtrl, payCtrl, getorderDetailCtrl } from '../controllers/orders';
 import { addItemToOrderValidation, createOrderValidation, updateOrderValidation } from '../validators/order';
 import { authMiddleware } from "../middlewares/auth.middleware";
 
@@ -26,6 +26,8 @@ router.post('/deuda', authMiddleware, deudaCtrl)
 router.post('/pay', authMiddleware, payCtrl)
 
 router.get('/items', authMiddleware, deudaCtrl)
+
+router.get('/detail/:id', authMiddleware, getorderDetailCtrl)
 
 
 export { router }
