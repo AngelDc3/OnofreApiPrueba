@@ -4,9 +4,11 @@ import pg from "pg";
 import config from "../config/pg";
 
 const pool = new pg.Pool(config);
+
 import { Articulo, Deuda, Pedido } from "../interfaces/entities.interface";
 import { CustomError } from "../utils/customError";
 import axios from "axios";
+import { PayOrder } from "../interfaces/itemOrder.interface";
 
 async function createOrder(userId: string): Promise<Pedido> {
     const client = await pool.connect();
@@ -77,10 +79,10 @@ async function addItemToOrder(items: Articulo[], idPedido: number) {
     let acu = 0;
     try {
         for (const item of items) {
-            const { idArticulo, cantidad, precio } = item;
+            const { idarticulo, cantidad, precio } = item;
             const result = await client.query(
                 "INSERT INTO detallepedido (idPedido, idArticulo, cantidad, precio) VALUES ($1, $2, $3, $4) RETURNING *",
-                [idPedido, idArticulo, cantidad, precio]
+                [idPedido, idarticulo, cantidad, precio]
             );
             acu = result.rowCount || 0 + acu;
         }
@@ -94,10 +96,9 @@ async function addItemToOrder(items: Articulo[], idPedido: number) {
 
 }
 
-async function generateDeudaAdams(pedidoId: string, deudaBody: Deuda, user_name: string): Promise<any> { //todo tipo de retorno
+async function generateDeudaAdams(pedidoId: string, total: number, currency: string, user_name: string): Promise<any> { //todo tipo de retorno
     const client = await pool.connect();
     try {
-        const { amount_currency, amount_value } = deudaBody
 
 
         const siExiste = 'update';
@@ -114,8 +115,8 @@ async function generateDeudaAdams(pedidoId: string, deudaBody: Deuda, user_name:
             docId: `${pedidoId}-${user_name}-onofre`,
             label: `Pedido #${pedidoId} `,
             amount: {
-                currency: amount_currency,
-                value: amount_value
+                currency: currency,
+                value: total
             },
             validPeriod: {
                 start: ahora.toISOString().split('.')[0], // Formato ATOM (ISO 8601)
@@ -165,5 +166,63 @@ async function getOrderWithDebt(idPedido: string, userId: string) {
     }
 
 }
-export { createOrder, getAllOrders, addDebtIdToOrder, getOrderWithDebt, getOrderById, generateDeudaAdams, updateOrderById, deleteOrderById, addItemToOrder };
+
+async function generateOrderPayUrl(userid: string, { items, total }: PayOrder) {
+    const client = await pool.connect()
+
+    try {
+        await client.query('BEGIN')
+        // Crear el pedido
+        const order = await client.query(
+            "INSERT INTO pedido ( estado, userId ) VALUES ('P',$1 ) RETURNING *",
+            [userid]
+        );
+        if (!order.rows[0]) {
+            throw new CustomError("order not created", 500)
+        }
+
+        // Agregar los items al pedido
+        let acu = 0;
+        const cantArt = items.length
+
+        console.log("cantArt", cantArt)
+        for (const item of items) {
+            const { idarticulo, cantidad, precio } = item;
+
+            const result = await client.query(
+                "INSERT INTO detallepedido (idPedido, idArticulo, cantidad, precio) VALUES ($1, $2, $3, $4) RETURNING *",
+                [order.rows[0].idpedido, idarticulo, cantidad, precio]
+            );
+            console.log("result", result.rowCount)
+            acu = (result.rowCount || 0) + acu;
+        }
+        console.log("acu", acu)
+        if (acu !== cantArt)
+            throw new CustomError("Error al cargar los articulos", 400);
+
+        // 
+        const deuda = await generateDeudaAdams(order.rows[0].idpedido.toString(), total, 'PYG', "onofre")
+
+        const updatePedido = await client.query('UPDATE pedido SET deudaid = $1 WHERE idpedido = $2 RETURNING *', [deuda.debt.docId, order.rows[0].idpedido])
+        if (!updatePedido.rows[0]) {
+            throw new CustomError("order not updated", 500)
+        }
+
+        //todo generar deuda interna
+        await client.query('COMMIT')
+
+        const response = {
+            orderId: order.rows[0].idpedido,
+            payUrl: deuda.debt.payUrl
+        }
+        return response
+    } catch (e) {
+        await client.query('ROLLBACK')
+        throw e
+    } finally {
+        client.release()
+    }
+
+}
+export { createOrder, getAllOrders, generateOrderPayUrl, addDebtIdToOrder, getOrderWithDebt, getOrderById, generateDeudaAdams, updateOrderById, deleteOrderById, addItemToOrder };
 

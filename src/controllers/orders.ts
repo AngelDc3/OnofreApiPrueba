@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 
-import { createOrder, getAllOrders, getOrderById, updateOrderById, deleteOrderById, addItemToOrder, generateDeudaAdams, addDebtIdToOrder, getOrderWithDebt } from "../services/orders";
+import { createOrder, getAllOrders, getOrderById, updateOrderById, deleteOrderById, addItemToOrder, generateDeudaAdams, addDebtIdToOrder, getOrderWithDebt, generateOrderPayUrl } from "../services/orders";
 import { CustomError } from "../utils/customError";
 import { matchedData } from "express-validator";
 import { RequestExt } from "../interfaces/req-ext";
@@ -129,11 +129,24 @@ export const deudaCtrl = async (req: RequestExt, res: Response, next: NextFuncti
         if (!validatePedido) {
             throw new CustomError("order with debt already exists or order not found", 400);
         }
-        const deuda = await generateDeudaAdams(body.idpedido, body.deuda, body.user_name);
+        const deuda = await generateDeudaAdams(body.idpedido, body.total, 'PYG', body.user_name);
 
         const deudaId = await addDebtIdToOrder(body.idpedido, deuda.debt.docId, userId);
 
         res.status(200).send(deudaId);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const payCtrl = async (req: RequestExt, res: Response, next: NextFunction) => {
+    try {
+        const { body } = req;
+        const userId = req.user?.id;
+
+        const payUrl = await generateOrderPayUrl(userId, body);
+
+        res.status(200).send(payUrl);
     } catch (error) {
         next(error);
     }

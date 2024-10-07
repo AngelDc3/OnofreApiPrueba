@@ -1,5 +1,6 @@
 import { NextFunction, Response, Request } from "express"
 import { validationResult } from "express-validator"
+import { CustomError } from "./customError"
 
 
 
@@ -8,8 +9,7 @@ const validateResult = (req: Request, res: Response, next: NextFunction) => {
         validationResult(req).throw()
         return next()
     } catch (err: any) {
-        res.status(403)
-        res.send({ errors: err.array() })
+        throw new CustomError(err.array().map((e: any) => e.msg).join(', '), 400)
     }
 }
 

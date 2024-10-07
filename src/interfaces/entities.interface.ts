@@ -32,9 +32,10 @@ export interface DetallePedido {
 }
 
 export interface Articulo {
-    idArticulo: number;
-    imagenUrl: string;
+    idarticulo: number;
+    imagenurl: string;
     cantidad: number;
     precio: number;
     descripcion: string;
+    titulo: string;
 }
