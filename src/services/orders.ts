@@ -18,6 +18,8 @@ async function createOrder(userId: string): Promise<Pedido> {
             "INSERT INTO pedido ( estado, userId ) VALUES ('P',$1 ) RETURNING *",
             [userId]
         );
+
+        //todo agregar tabla menor estadoPedido
         return result.rows[0];
     } finally {
         client.release();

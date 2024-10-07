@@ -104,14 +104,15 @@ export const addItemToOrderCtrl = async (req: Request, res: Response, next: Next
 
 export const webhookCtrl = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        //TODO el calculo del Hmac no funciona. Ver forma de replicar implementacion de php a js
         const hmacEsperada = calcularHmac(req.body);
+
         const hmacRecibida = req.headers["x-adams-notify-hash"];
 
         if (hmacEsperada !== hmacRecibida) {
             throw new CustomError("Invalid HMAC", 400);
         }
 
-        //todo Do something with the webhook data
         console.log(req.body);
 
         res.status(200).send(req.body);
