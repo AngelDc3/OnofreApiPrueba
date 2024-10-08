@@ -1,0 +1,266 @@
+{
+	"info": {
+		"_postman_id": "19acfbe8-e2c6-43e8-abce-95d3376bd00e",
+		"name": "onofreAPi",
+		"description": "Obtén un token y agregalo en la colección como bearer token",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27052807"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n    \"email\": \"1@test.com\",\r\n    \"password\": \"123456\",\r\n    \"userName\": \"Angel\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://onofreapi.net-crm.cloud/auth/register",
+					"protocol": "https",
+					"host": [
+						"onofreapi",
+						"net-crm",
+						"cloud"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n    \"email\": \"1@test.com\",\r\n    \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://onofreapi.net-crm.cloud/auth/login",
+					"protocol": "https",
+					"host": [
+						"onofreapi",
+						"net-crm",
+						"cloud"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Orders",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://onofreapi.net-crm.cloud/order",
+					"protocol": "https",
+					"host": [
+						"onofreapi",
+						"net-crm",
+						"cloud"
+					],
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GenerarDeuda",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"deuda\":{\r\n    \"amount_value\":\"10000\",\r\n   \"amount_currency\": \"PYG\"\r\n  },\r\n  \"idpedido\" : 5,\r\n  \"user_name\": \"Angel\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://onofreapi.net-crm.cloud/order/deuda",
+					"protocol": "https",
+					"host": [
+						"onofreapi",
+						"net-crm",
+						"cloud"
+					],
+					"path": [
+						"order",
+						"deuda"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GenerarPedido",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://onofreapi.net-crm.cloud/order",
+					"protocol": "https",
+					"host": [
+						"onofreapi",
+						"net-crm",
+						"cloud"
+					],
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtenerPedidoPorId",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://onofreapi.net-crm.cloud/order/13",
+					"protocol": "https",
+					"host": [
+						"onofreapi",
+						"net-crm",
+						"cloud"
+					],
+					"path": [
+						"order",
+						"13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtenerArticulos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://onofreapi.net-crm.cloud/item",
+					"protocol": "https",
+					"host": [
+						"onofreapi",
+						"net-crm",
+						"cloud"
+					],
+					"path": [
+						"item"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "simularPagoWeb",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"total\": 20000,\r\n    \"items\": [\r\n        {\r\n            \"idarticulo\": 1,\r\n            \"imagenurl\": \"https://www.maahsa.com.py/storage/sku/san-onofre-bebidas-alimentos-cana-etiqueta-negra-200-ml-1-1-1678448112.png\",\r\n            \"cantidad\": 1,\r\n            \"precio\": \"20000.00\",\r\n            \"descripcion\": \"Ca¤a Paraguaya de elaboraci¢n artesanal, a¤ejada en cubas de roble virgen, lo cual le aporta un sabor £nico y extraordinario a lo largo del tiempo. El resultado es una bebida delicada, noble, con notas consistentes y de alta calidad. Nuestra ca¤a San Onofre se elabora a partir de la miel de ca¤a de az£car, lo que garantiza un mejor sabor y una calidad constante. Utilizamos un m‚todo de fermentaci¢n automatizado y realizamos la destilaci¢n con columna y alambique de cobre, permitiendo la separaci¢n de los componentes de manera precisa.\",\r\n            \"titulo\": \"Ca¤a Etiqueta Negra 200 ml\",\r\n            \"subtotal\": null\r\n        },\r\n        {\r\n            \"idarticulo\": 2,\r\n            \"imagenurl\": \"https://www.maahsa.com.py/storage/sku/san-onofre-bebidas-alimentos-cana-san-onofre-etiqueta-negra-x-750-ml-1-1-1678447895.png\",\r\n            \"cantidad\": 1,\r\n            \"precio\": \"75000.00\",\r\n            \"descripcion\": \"Ca¤a Paraguaya de elaboraci¢n artesanal, a¤ejada en cubas de roble virgen, lo cual le aporta un sabor £nico y extraordinario a lo largo del tiempo. El resultado es una bebida delicada, noble, con notas consistentes y de alta calidad. Nuestra ca¤a San Onofre se elabora a partir de la miel de ca¤a de az£car, lo que garantiza un mejor sabor y una calidad constante. Utilizamos un m‚todo de fermentaci¢n automatizado y realizamos la destilaci¢n con columna y alambique de cobre, permitiendo la separaci¢n de los componentes de manera precisa.\",\r\n            \"titulo\": \"Ca¤a Etiqueta Negra x 750 ml\",\r\n            \"subtotal\": null\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://onofreapi.net-crm.cloud/order/pay",
+					"protocol": "https",
+					"host": [
+						"onofreapi",
+						"net-crm",
+						"cloud"
+					],
+					"path": [
+						"order",
+						"pay"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtenerDetallePedido",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://onofreapi.net-crm.cloud/order/detail/4",
+					"protocol": "https",
+					"host": [
+						"onofreapi",
+						"net-crm",
+						"cloud"
+					],
+					"path": [
+						"order",
+						"detail",
+						"4"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYzMjg0M2UxLTUxNDgtNGE3MC1iZWI2LTNmMjJkNTRiYzY1MSIsImlhdCI6MTcyODM0MjA1MSwiZXhwIjoxNzI4MzQ5MjUxfQ.g3Y4JO2FyDoPF97v1lA65ozxZ-XzSwjpEc2C6Xm0i5o",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
